@@ -1,0 +1,10 @@
+{
+  "name": "trivenn",
+  "version": "1.0.0",
+  "description": "Trivenn — three hidden rules, one country in the middle. A daily deduction game.",
+  "private": true,
+  "scripts": {
+    "build": "node build/generate.js",
+    "serve": "node build/serve.js"
+  }
+}

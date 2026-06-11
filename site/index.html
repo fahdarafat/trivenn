@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trivenn — Three hidden rules. One country in the middle.</title>
+<meta name="description" content="A daily deduction game: three secret rules about countries, exactly one country on Earth fits all three. Find it in 6 probes.">
+<meta name="theme-color" content="#0f1115">
+<meta property="og:title" content="Trivenn">
+<meta property="og:description" content="Three hidden rules. One country in the middle. A new puzzle every day.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='38' cy='40' r='26' fill='none' stroke='%23f59e0b' stroke-width='7'/><circle cx='62' cy='40' r='26' fill='none' stroke='%2338bdf8' stroke-width='7'/><circle cx='50' cy='62' r='26' fill='none' stroke='%23c084fc' stroke-width='7'/></svg>">
+<link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+<header class="hdr">
+  <button id="btnHelp" class="icon-btn" aria-label="How to play">?</button>
+  <div class="wordmark" aria-label="Trivenn">TRI<span class="wm-v">V</span>ENN</div>
+  <div class="hdr-right">
+    <span id="streakChip" class="streak-chip" hidden></span>
+    <button id="btnStats" class="icon-btn" aria-label="Statistics">📊</button>
+  </div>
+</header>
+
+<main id="game" class="game">
+  <section class="venn-band" aria-hidden="true">
+    <svg id="vennSvg" viewBox="0 0 360 150">
+      <g fill="none" stroke-width="3">
+        <circle id="ringA" class="ring ring-a" cx="138" cy="62" r="48"/>
+        <circle id="ringB" class="ring ring-b" cx="222" cy="62" r="48"/>
+        <circle id="ringC" class="ring ring-c" cx="180" cy="98" r="48"/>
+      </g>
+      <text class="ring-label label-a" x="92" y="30">A</text>
+      <text class="ring-label label-b" x="262" y="30">B</text>
+      <text class="ring-label label-c" x="180" y="142">C</text>
+      <text id="vennCenter" x="180" y="80" text-anchor="middle" font-size="28" opacity="0">?</text>
+    </svg>
+  </section>
+
+  <div id="hintChip" class="hint-chip" hidden>Lamps show which secret rules your guess satisfies.</div>
+
+  <ol id="rows" class="rows" aria-label="Your probes"></ol>
+  <div id="pips" class="pips" aria-label="Guesses remaining"></div>
+
+  <div class="dock">
+    <ul id="acList" class="ac-list" role="listbox" hidden></ul>
+    <div class="dock-row">
+      <input id="guessInput" type="text" placeholder="Probe a country…" autocomplete="off" autocapitalize="words"
+             spellcheck="false" aria-label="Country to probe" role="combobox" aria-expanded="false" aria-controls="acList">
+      <button id="btnProbe" class="probe-btn" disabled>PROBE</button>
+    </div>
+  </div>
+</main>
+
+<section id="decoder" class="decoder" hidden>
+  <div class="decoder-inner">
+    <div class="hero">
+      <div id="heroFlag" class="hero-flag"></div>
+      <div id="heroName" class="hero-name"></div>
+      <div id="heroResult" class="hero-result"></div>
+    </div>
+    <h2 class="decoder-h">The three rules</h2>
+    <div id="ruleCards" class="rule-cards"></div>
+    <h2 class="decoder-h">Your journey</h2>
+    <div class="journey"><svg id="journeySvg" viewBox="0 0 360 240"></svg></div>
+    <div id="factCard" class="fact-card"></div>
+    <button id="btnShare" class="share-btn">SHARE</button>
+    <div class="decoder-foot">
+      <button id="btnDecoderStats" class="ghost-btn">Stats</button>
+      <button id="btnPlayToday" class="ghost-btn" hidden>Play today’s puzzle →</button>
+      <div id="countdown" class="countdown"></div>
+    </div>
+  </div>
+</section>
+
+<div id="statsModal" class="modal" hidden>
+  <div class="modal-card">
+    <button class="modal-close" data-close aria-label="Close">×</button>
+    <h2>Statistics</h2>
+    <div id="statTiles" class="stat-tiles"></div>
+    <h3>Guess distribution</h3>
+    <div id="distBars" class="dist-bars"></div>
+    <h3>Detective profile</h3>
+    <div id="profileBars" class="profile-bars"></div>
+    <div id="profileLine" class="profile-line"></div>
+  </div>
+</div>
+
+<div id="helpOverlay" class="modal" hidden>
+  <div class="modal-card help-card">
+    <button class="modal-close" data-close aria-label="Close">×</button>
+    <h2>How to play</h2>
+    <div class="help-panel">
+      <div class="help-art">
+        <svg viewBox="0 0 120 90"><g fill="none" stroke-width="3"><circle cx="45" cy="38" r="24" class="ring-a-s"/><circle cx="75" cy="38" r="24" class="ring-b-s"/><circle cx="60" cy="56" r="24" class="ring-c-s"/></g><text x="60" y="50" text-anchor="middle" font-size="18" fill="#e7e9ee">?</text></svg>
+      </div>
+      <p>Every day there are <b>three secret rules</b> about countries — and exactly <b>one country on Earth</b> fits all three.</p>
+    </div>
+    <div class="help-panel">
+      <div class="help-art demo-row">🇯🇵 Japan → <span class="demo-lamp off"></span><span class="demo-lamp off"></span><span class="demo-lamp on"></span></div>
+      <p>Guess any country. Each rule it satisfies <b>lights a lamp</b>.</p>
+    </div>
+    <div class="help-panel">
+      <div class="help-art">🟢🟢🟢</div>
+      <p>Find the country that lights <b>all three lamps</b>. You have <b>6 probes</b>.</p>
+    </div>
+    <p class="help-foot">New puzzle every day at midnight. The rules are revealed after the game.</p>
+    <button id="btnHelpPlay" class="share-btn">PLAY</button>
+  </div>
+</div>
+
+<div id="toast" class="toast" hidden></div>
+<div id="srLive" class="sr-only" aria-live="polite"></div>
+<div id="confetti" class="confetti" aria-hidden="true"></div>
+
+<script src="countries.js"></script>
+<script src="puzzles.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
